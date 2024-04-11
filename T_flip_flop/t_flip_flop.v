@@ -1,37 +1,47 @@
-// just inverted input
-module t_ff(qq,qqbar,t,cclk);
-    input t,cclk;
-    output qq, qqbar;
-    wire w1,w2,w3;
-      not(w3,t);
-      nd_ff_gate m1(w1,w2,w3,cclk);
-      d_ff_gate m2(qq,qqbar,w1,cclk);
-    
-    endmodule
-    module d_ff_gate(q,qbar,d,clk);
-    input d,clk;
-    output q, qbar;
-    wire dbar; //output of not1
-    wire nand1_out; // output of nand1
-    wire nand2_out; // output of nand2
-    not ( dbar,d); 
-    nand (nand1_out,clk,d);
-    nand (nand2_out,clk,dbar);
-      nand (q,qbar,nand1_out);
-      nand (qbar,q,nand2_out);
-    endmodule
-    
-    module nd_ff_gate(q,qbar,d,nclk);
-    input d,nclk;
-    output q, qbar;
-    wire dbar; //output of not1
-    wire nand1_out; // output of nand1
-    wire nand2_out; // output of nand2
-    wire clk;
-    not (clk,nclk);
-    not ( dbar,d); 
-    nand (nand1_out,clk,d);
-    nand (nand2_out,clk,dbar);
-      nand (q,qbar,nand1_out);
-      nand (qbar,q,nand2_out);
-    endmodule
+module t_ff(q,qbar,t,rst,clk);
+  input t,clk,rst;
+   output q, qbar;
+ wire w1;
+ xor(w1,t,q);
+ d_ff(q,qbar,w1,rst,clk);
+endmodule
+
+module d_ff(q,qbar,d,rst,clk);
+   input d,clk,rst;
+   output q, qbar;
+   wire w1,w2;
+ nd_ff_latch m1	(w1,w2,rst,d,clk);
+ d_ff_latch m2  (q,qbar,rst,w1,clk);
+   
+   endmodule
+module d_ff_latch(q,qbar,rst,d,clk);
+   input d,clk,rst;
+   output q, qbar;
+   wire dbar; //output of not1
+   wire nand1_out; // output of nand1
+   wire nand2_out; // output of nand2
+ wire rstn;
+ not(rstn,rst);
+   not ( dbar,d); 
+   nand (nand1_out,rstn,clk,d);
+   nand (nand2_out,rstn,clk,dbar);
+     nand (q,qbar,rstn,nand1_out);
+     nand (qbar,rstn,q,nand2_out);
+   endmodule
+   
+module nd_ff_latch(q,qbar,rst,d,nclk);
+   input d,nclk,rst;
+   output q, qbar;
+     wire rstn;
+   not(rstn,rst);
+   wire dbar; //output of not1
+   wire nand1_out; // output of nand1
+   wire nand2_out; // output of nand2
+   wire clk;
+   not (clk,nclk);
+   not ( dbar,d); 
+   nand (nand1_out,rstn,clk,d);
+   nand (nand2_out,rstn,clk,dbar);
+     nand (q,qbar,rstn,nand1_out);
+     nand (qbar,rstn,q,nand2_out);
+   endmodule

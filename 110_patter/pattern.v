@@ -1,5 +1,5 @@
 //----------PSTER UNLOCK 110
-module pattern(in,clk,out,rst);
+module lOCK(in,clk,out,rst);
     input in,clk,rst;
     output out;
       wire w1,w2;
